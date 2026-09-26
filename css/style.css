@@ -252,10 +252,12 @@ footer
   .about{
     width:70%;
     margin:7px;
+    padding:2px;
   }
 
   .contact{
     width:90%;
-    margin:12px;
+    margin:8px;
+    padding:2px;
   }     
 }
