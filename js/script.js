@@ -100,3 +100,18 @@ function setupFAQ() {
         }
     });
 }
+//read more and read less
+let readMoreBtn = document.getElementById("readMoreBtn");
+let moreText = document.getElementById("moreText");
+
+readMoreBtn.addEventListener("click", function () {
+
+    if (moreText.style.display === "none") {
+        moreText.style.display = "block";
+        readMoreBtn.textContent = "Read Less";
+    } else {
+        moreText.style.display = "none";
+        readMoreBtn.textContent = "Read More";
+    }
+
+});
