@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home | Real Estate</title>
+  <link rel="icon" type="image/png" href="logo/logo.png">
+  <link rel="stylesheet" href="css/style.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg bgcolor sticky-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#"><div class="text-white">Real Estate</div></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mx-auto mb-2 mb-lg-0 navbar-bg">
+          <li class="nav-item">
+            <a class="nav-link active" href="index.html">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="pages/properties.html">Properties</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="pages/aboutus.html">About Us</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="pages/contactus.html">Contact Us</a>
+          </li>
+        </ul>
+        <div class="d-flex">
+          <button type="button" class="login-btn">
+            <a href="users/login.html"><i class="fa-regular fa-user"></i> Login</a>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="cover">
+    <div class="container">
+        <div class="search-section p-4 bg-white rounded-3 shadow-sm">
+          <h3 class="text-dark text-center mb-3 fw-bold">Find Your Dream Home</h3>
+          <div class="row g-2 align-items-center">
+              <div class="col-md-4">
+                  <input type="text" id="townshipSearch" class="form-control" placeholder="Township">
+              </div>
+              <div class="col-md-4">
+                  <input type="text" id="citySearch" class="form-control"  placeholder="City">
+              </div>
+              <div class="col-md-3">
+                  <select id="typeSearch" class="form-select">
+                      <option value=""> All Listing Types </option>
+                      <option value="sale"> Sale </option>
+                      <option value="rent">  Rent </option>
+                  </select>
+              </div>
+              <div class="col-md-1">
+                  <button type="button" class="btn btn-dark w-100" onclick="searchProperty()"> Search </button>
+              </div>
+          </div>
+        </div>
+    </div>
+  </div>
+  <div class="properties mt-4">
+    <h3>Latest Properties</h3>
+    <div id="propertyContainer" class="row"></div>
+    <div id="propertyTemplate" class="property-card col-md-4 mt-3 d-none">
+      <div class="card h-100 shadow-sm">
+        <img class="property-image img-fluid mb-2" style="height: 200px; width: 100%; object-fit: cover;">
+        <div class="property-info p-3 d-flex flex-column justify-content-between">
+          <div>
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="badge bg-warning text-white text-uppercase listing_type"></span>
+            </div>
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="badge bg-dark text-white text-uppercase px-2 py-1 property_type"></span>
+            </div>
+            <div class="row">
+              <div class="col">
+                <h5 class="property-name fw-bold"></h5>
+              </div>
+              <div class="col-5 text-end">
+                <p class="property-price fw-bold"></p>
+              </div>
+            </div>
+            <div class="location mt-1">
+              <i class="fa-solid fa-location-dot"></i>
+              <span class="property-location text-muted small"></span>
+            </div>
+
+            <div class="row text-center mt-2">
+              <div class="col-3">
+                <i class="fa-solid fa-bed"></i>
+                <span class="property-bed"></span> beds
+              </div>
+              <div class="col-3 border-start">
+                <i class="fa-solid fa-bath"></i>
+                <span class="property-bath"></span> baths
+              </div>
+              <div class="col-3 border-start">
+                <i class="fa-regular fa-square me-1"></i>
+                <span class="property-area"></span> sqft
+              </div>
+              <div class="col-3 border-start">
+                <i class="fa-solid fa-stairs me-1"></i>
+                <span class="property-floor"></span> floors
+              </div>
+            </div>
+          </div>
+        </div>
+         <div class="card-footer">
+              <small class="property-author text-body-secondary"></small>
+         </div>
+      </div>
+    </div>
+  </div>
+  <div class="categories mt-4">
+    <h3>Our Categories</h3>
+    <div class="row">
+    <div class="col-sm mb-3">
+      <div class="card border-0">
+        <div class="card-body">
+          <h5 class="card-title text-center fw-bold">Buy</h5>
+            <p class="card-text">
+            Find properties available for purchase and explore houses, apartments, condos, and land. Check property prices, locations, and details to compare different options. 
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm mb-3">
+      <div class="card border-0">
+        <div class="card-body">
+          <h5 class="card-title text-center fw-bold">Sell</h5>
+          <p class="card-text">
+            List your property for sale with ease. Add details, photos, and location information. Reach people looking for a new property. Sell your property with a simple and easy process.
+          </p>
+        </div>
+      </div>
+    </div>
+      <div class="col-sm">
+      <div class="card border-0">
+        <div class="card-body">
+          <h5 class="card-title text-center fw-bold">Rent</h5>
+          <p class="card-text">
+            Find properties available for rent. Explore homes in your preferred location. Check rental prices and property details. Choose a comfortable place that suits your needs.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div class="faq">
+  <h3>Frequently Asked Questions</h3>
+    <div class="faq-container">
+      <div class="faq-question">
+        <h6>What types of properties do you sell?</h6>
+        <i class="fa-solid fa-angle-down"></i>
+      </div>
+        <div class="faq-answer">
+        <p>
+          We offer a wide selection of residential properties, including single-family homes, modern condominiums, and spacious townhouses.
+          Our portfolio also features commercial real estate, ranging from prime retail storefronts to multi-story office buildings suitable for corporate headquarters. 
+          For those interested in development or agriculture, we carry diverse plots of vacant land and farmland. 
+          Additionally, we specialize in high-end luxury estates and exclusive waterfront properties tailored to premium buyers.
+        </p>
+        </div>
+    </div>
+    <div class="faq-container">
+      <div class="faq-question">
+        <h6> How do I know if a property is a good investment?</h6>
+        <i class="fa-solid fa-angle-down"></i>
+      </div>
+        <div class="faq-answer">
+        <p>
+          To determine if a property is a good investment, evaluate its location for strong local demand, employment growth, and quality amenities that drive steady appreciation. 
+          Calculate key financial metrics like cash-on-cash return, cap rate, and net operating income to ensure positive cash flow after covering all debt and maintenance expenses. 
+          Research local market trends and property vacancy rates to ensure reliable rental income and minimal risk of extended vacancy. 
+          Finally, inspect the physical condition of the property to accurately estimate immediate repairs and future capital expenditure costs that could impact your returns.
+        </p>
+        </div>
+    </div>
+    <div class="faq-container">
+        <div class="faq-question">
+          <h6> What is the process for buying a property?</h6>
+          <i class="fa-solid fa-angle-down"></i>
+        </div>
+          <div class="faq-answer">
+          <p>
+              Buying a property begins with assessing your finances, saving for closing costs, and obtaining a mortgage pre-approval to establish a clear budget.
+              Once prepared, you work with a real estate agent to tour homes, select a property, and negotiate a formal purchase agreement with the seller.
+              After an offer is accepted, a professional inspector checks the home for structural issues while your lender conducts an appraisal to finalize your loan underwriting. 
+              Finally, you perform a last property walkthrough, sign the legal documents, transfer the necessary funds, and officially receive the keys to your new home.
+          </p>
+          </div>
+    </div>
+    <div class="faq-container">
+        <div class="faq-question">
+          <h6> Can I tour a property before buying?</h6>
+          <i class="fa-solid fa-angle-down"></i>
+        </div>
+        <div class="faq-answer">
+            <p>
+                Yes, you can and should tour a property in person or virtually before making a purchase commitment. 
+                Touring allows you to inspect the layout, overall physical condition, and natural lighting to ensure the home aligns with your expectations. 
+                It also gives you the opportunity to explore the surrounding neighborhood, checking traffic levels, noise, and nearby amenities firsthand. 
+                If an in-person visit isn't feasible, your agent can host a live video walkthrough or provide detailed virtual tours so you can evaluate the space remotely.
+            </p>
+        </div>
+    </div>
+  </div>
+  <footer>
+      <div class="row mt-3">
+        <div class="col-9">
+          <h5>Real Estate</h5>
+          <p>Supporting visitors in making confident and well-informed property decisions</p>
+        </div>
+        <div class="col">
+          <h5>Contact</h5>
+          <p>Email:linpyaemg.lpmaung@gmail.com</p>
+          <p>Phone: +95259294449</p>
+        </div>
+      </div>
+      </div>
+  </footer>
+  <div class="sub-footer text-center text-white p-2">
+    © 2026 Real Estate. All rights reserved
+  </div>
+  <script src="js/script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

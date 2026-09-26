@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login | Real Estate</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-5">
+                <div class="card shadow">
+                    <div class="card-body p-4">
+                        <h2 class="text-center mb-4">Admin Login</h2>
+                        <div id="errorMessage" class="alert alert-danger d-none"></div>
+                        <form id="loginForm">
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" id="email" class="form-control" placeholder="Enter admin email" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <div class="input-group">
+                                    <input type="password" id="password" class="form-control" placeholder="Enter password" required>
+                                    <button type="button" id="showPassword" class="btn btn-outline-secondary">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fa-solid fa-right-to-bracket"></i>
+                                Login
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../js/admin/login.js"></script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Property | Real Estate</title>
+    <link rel="icon" type="image/png" href="../../logo/logo.png">
+    <link rel="stylesheet" href="../css/user-style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+</head>
+<body>
+    <div class="sidebar">
+        <h4 class="sidebar-title">Your Profile</h4>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a href="profile.html" class="nav-link"><i class="fa-solid fa-gear me-2"></i>Account Setting</a>
+            </li>
+            <li class="nav-item">
+                <a href="property.html" class="nav-link active"><i class="bi bi-building me-2"></i>Your Properties</a>
+            </li>
+            <li class="nav-item">
+                <a href="login.html" id="logoutButton" class="nav-link"><i class="bi bi-box-arrow-right me-2"></i>Logout</a>
+            </li>
+        </ul>
+    </div>
+    <div class="main-content p-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h4 class="mb-0 text-dark"><i class="fa-solid fa-pen me-2"></i>Edit Property</h4>
+            </div>
+            <div class="card-body">
+                <form id="editPropertyForm">
+                    <div class="mb-3">
+                        <label for="property_name" class="form-label">Property Name</label>
+                        <input type="text" id="property_name" class="form-control" placeholder="e.g. Modern Villa" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="property_type" class="form-label">Property Type</label>
+                            <select id="property_type" class="form-select" required>
+                                <option value="">Select Property Type</option>
+                                <option value="House">House</option>
+                                <option value="Apartment">Apartment</option>
+                                <option value="Condo">Condo</option>
+                                <option value="Land">Land</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="listing_type" class="form-label">Listing Type</label>
+                            <select id="listing_type" class="form-select" required>
+                                <option value="">Select Listing Type</option>
+                                <option value="Sale">Sale</option>
+                                <option value="Rent">Rent</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="township" class="form-label">Township</label>
+                            <input type="text" id="township" class="form-control" placeholder="Enter township" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="city" class="form-label">City</label>
+                            <input type="text" id="city" class="form-control" placeholder="Enter city" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="bed_room" class="form-label">Bedrooms</label>
+                            <input type="number" id="bed_room" class="form-control" min="0" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="bath_number" class="form-label">Bathrooms</label>
+                            <input type="number" id="bath_number" class="form-control" min="0" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="floor" class="form-label">Floor</label>
+                            <input type="number" id="floor" class="form-control" min="0" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="property_area" class="form-label">Property Area</label>
+                            <input type="text" id="property_area" class="form-control" placeholder="e.g. 1200 sqft" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="price" class="form-label">Price</label>
+                            <input type="number" id="price" class="form-control" min="0" placeholder="Enter price" required>
+                        </div>
+                    </div>
+                    <hr class="my-4">
+                    <div class="mb-3">
+                        <label for="propertyImage" class="form-label fw-bold">Property Image</label>
+                        <input type="file" id="propertyImage" class="form-control" accept="image/*">
+                        <div class="form-text">Select a new image if you want to replace the current property image.</div>
+                    </div>
+                    <div id="imagePreviewContainer" class="row mt-3"></div>
+                    <div class="mt-4 d-flex gap-2">
+                        <button type="submit" id="updateButton" class="btn btn-dark"><i class="fa-solid fa-pen me-1"></i>Update Property</button>
+                        <a href="property.html" class="btn btn-secondary"><i class="fa-solid fa-arrow-left me-1"></i>Back</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/user/edit-property.js"></script>
+</body>
+</html>

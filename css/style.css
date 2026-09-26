@@ -1,0 +1,244 @@
+*{
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background-color:#D6D3D1;
+}
+.bgcolor{
+    background-color:black;
+}
+
+#topBtn {
+      display: none;
+      position: fixed;
+      bottom: 130px;
+      right: 20px;
+      padding: 10px 15px;
+      background:#FFDF20;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+.login-btn {
+    width:110px;
+    cursor: pointer;
+    padding: 5px;
+    background: #fff;
+    border-radius: 25px;
+    border:none;
+}
+.login-btn a {
+    color:#000;
+    text-decoration: none;
+}
+.login-btn a:hover {
+      background-color:#fff;
+      color:#000;
+}
+.fa-bars{
+    color:#A6A09B;
+}
+.navbar-nav .nav-item .nav-link {
+    color: white;
+    font-size: 17px;
+}
+
+.navbar-nav .nav-item .nav-link.active {
+    color: white;
+    text-decoration: underline;
+    text-decoration-color:#FFDF20;
+    text-underline-offset: 6px;
+}
+.cover {
+    height: 590px;
+    background-image:url("../images/cover.jpeg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+}
+.search-section {
+    position: absolute;
+    top: 70%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 700%;
+    max-width: 90%;
+    padding: 20px;
+    border-radius:12px;
+    background-color:white;
+}
+.property-icon{
+    background-color:#E7E5E4;
+    padding:10px;
+    border-radius:20px;
+    text-align: center;
+    width:90%;
+}
+.properties{
+    width:80%;
+    margin:20px;
+}
+.property-type{
+    background-color:#292524;
+    color:#fff;
+    width:30%;
+    border-radius:14px;
+    text-align: center;
+}
+.property-list{
+    margin:20px;
+}
+.categories{
+    margin:20px;
+}
+.categories .card{
+    width:90%;
+    background-color:#E7E5E4;
+}
+#moreText { 
+    display: none; 
+}
+.about{
+    width:80%;
+    margin:80px;
+}
+.contact .form-control{
+    width:90%;
+}
+.contact{
+    width:80%;
+    margin:80px;
+}
+.footer{
+    background-color:#000;
+    color:#fff;
+    padding:20px;
+}
+.faq {
+   margin:20px;
+  width: 90%;
+  padding: 20px;
+}
+
+.faq-container{
+    width:90%;
+    border: 1px solid #A6A09B;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top:5px;
+    margin-bottom:12px;
+}
+.faq-answer {
+  display: none;
+  padding: 10px 0 0;
+  font-size: 14px;
+  color: #555555;
+}
+
+.faq-question {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+.faq-container .faq-question h6{
+    font-size:16px;
+}
+footer 
+{
+  background-color:black;
+  padding:30px;
+  color: white;
+}
+.sub-footer{
+    width:100%;
+   background-color:#292524;
+}
+.quick-link a{
+    color:white;
+    text-decoration: none;
+}
+.tab-list {
+  display: inline-flex;
+  background-color: var(--bg-color);
+  padding: 6px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+  gap: 4px;
+}
+
+.property-features{
+    padding:20px;
+}
+.tab-button {
+  border: none;
+  background: transparent;
+  padding: 10px 22px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-color);
+  border-radius: calc(var(--radius) - 4px);
+  cursor: pointer;
+  transition: var(--transition);
+  outline: none;
+}
+
+.tab-button:hover:not(.active) {
+  color: var(--primary-color);
+  background-color: rgba(37, 99, 235, 0.05);
+}
+
+
+.tab-button.active {
+  background-color: var(--active-bg);
+  color: var(--primary-color);
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.tab-button:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+
+.tab-panels {
+  margin-top: 1.5rem;
+}
+
+.tab-panel {
+  display: none;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  padding: 1.5rem;
+  background-color: var(--active-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+}
+
+.tab-panel.active {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media screen and (min-width: 480px) and (max-width: 768px) {
+ .search-section {
+   input{
+    margin-bottom:12px;
+   }
+  }
+  .about{
+    width:90%;
+    margin:12px;
+  }
+
+  .contact{
+    width:90%;
+    margin:12px;
+  }     
+}
