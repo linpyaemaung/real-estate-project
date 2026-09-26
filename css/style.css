@@ -225,39 +225,41 @@ footer
   opacity: 1;
   transform: translateY(0);
 }
-#moreText {
-    margin-top: 15px;
-    line-height: 1.8;
-    color: #555;
-}
 
-
-#readMoreBtn {
-    margin-top: 10px;
-    padding: 10px 22px;
-    border-radius: 5px;
-    transition: 0.3s;
-}
-
-#readMoreBtn:hover {
-    background-color: #333;
-    color: #fff;
-}
 @media screen and (min-width: 480px) and (max-width: 768px) {
  .search-section {
    input{
     margin-bottom:12px;
    }
   }
-  .about{
-    width:70%;
-    margin:7px;
-    padding:2px;
-  }
 
-  .contact{
-    width:90%;
-    margin:8px;
-    padding:2px;
-  }     
+ .contact {
+    width: 90%;
+    max-width: 750px;
+    margin: 50px auto;
+    padding: 30px;
+}
+
+.contact h3 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 32px;
+}
+
+.contact form {
+    width: 100%;
+}
+
+.contact .form-control {
+    padding: 12px;
+    border-radius: 6px;
+}
+
+.contact textarea {
+    resize: vertical;
+}
+
+.contact button {
+    padding: 10px 25px;
+}
 }
