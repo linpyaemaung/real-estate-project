@@ -29,7 +29,8 @@ async function loadPropertyDetails() {
         let userData = {
             name: "Unknown User",
             phone: "N/A",
-            email: "N/A"
+            email: "N/A",
+            user_type:"N/A"
         };
 
         if (usersRes.ok) {
@@ -39,6 +40,7 @@ async function loadPropertyDetails() {
                 userData.name = foundUser.name || foundUser.username || "Unknown User";
                 userData.phone = foundUser.phone || foundUser.phone_number || foundUser.phoneNumber || "N/A";
                 userData.email = foundUser.email || "N/A";
+                  userData.user_type = foundUser.user_type || "N/A";
             }
         }
 
@@ -79,7 +81,18 @@ function renderDetails(property, author) {
         emailEl.textContent = author.email;
         emailEl.href = author.email !== "N/A" ? `mailto:${author.email}` : "#";
     }
+  const usertypeEl = document.getElementById("authorUserType");
 
+if (usertypeEl) {
+    usertypeEl.textContent = author.user_type || author.usertype || "User";
+    const userType = author.user_type || author.usertype;
+    
+    if (userType && userType !== "N/A") {
+        usertypeEl.href = `properties.html?type=${encodeURIComponent(userType.toLowerCase())}`;
+    } else {
+        usertypeEl.href = "#";
+    }
+}
   
     setText("badgeListing", (property.listing_type || "N/A").toUpperCase());
     setText("badgeType", (property.property_type || "N/A").toUpperCase());
@@ -89,7 +102,6 @@ function renderDetails(property, author) {
     setText("featureBaths", `${property.bath_number || 0} Baths`);
     setText("featureArea", `${property.property_area || "N/A"} sqft`);
     setText("featureFloor", `${property.floor || 0} Floor`);
-
 
     const mainImg = document.getElementById("mainImage");
     if (mainImg) {

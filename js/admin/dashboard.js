@@ -1,14 +1,28 @@
 const USERS_API = "https://6aa8c6ca2d442cb69d49088a.mockapi.io/api/v1/users";
 const PROPERTIES_API = "https://6aa8c6ca2d442cb69d49088a.mockapi.io/api/v1/properties";
+
 const CONTACT_STORAGE_KEY = "contactMessages";
+
 const adminData = localStorage.getItem("admin");
 
 if (!adminData) {
     window.location.href = "login.html";
 }
 
-const admin = JSON.parse(adminData);
-document.getElementById("adminName").textContent = admin.name || "";
+let admin = null;
+
+try {
+    admin = JSON.parse(adminData);
+} catch (error) {
+    admin = {
+        name: "Admin"
+    };
+}
+
+
+/* =========================
+   ELEMENTS
+========================= */
 
 const dashboardTab = document.getElementById("dashboardTab");
 const usersTab = document.getElementById("usersTab");
@@ -21,8 +35,48 @@ const propertiesSection = document.getElementById("propertiesSection");
 const contactsSection = document.getElementById("contactsSection");
 
 const pageTitle = document.getElementById("pageTitle");
+const adminName = document.getElementById("adminName");
+
+const userCount = document.getElementById("userCount");
+const propertyCount = document.getElementById("propertyCount");
+const contactCount = document.getElementById("contactCount");
+
+const usersTableBody = document.getElementById("usersTableBody");
+const propertiesTableBody = document.getElementById("propertiesTableBody");
+const contactsTableBody = document.getElementById("contactsTableBody");
+
+const addUserButton = document.getElementById("addUserButton");
+const addPropertyButton = document.getElementById("addPropertyButton");
+
+const refreshContactsButton = document.getElementById("refreshContactsButton");
+const logoutButton = document.getElementById("logoutButton");
+
+const userModalElement = document.getElementById("userModal");
+const propertyModalElement = document.getElementById("propertyModal");
+
+const userModal = new bootstrap.Modal(userModalElement);
+const propertyModal = new bootstrap.Modal(propertyModalElement);
+
+
+/* =========================
+   ADMIN NAME
+========================= */
+
+if (adminName) {
+    adminName.textContent =
+        admin?.name ||
+        admin?.username ||
+        admin?.email ||
+        "Admin";
+}
+
+
+/* =========================
+   SECTION CONTROL
+========================= */
 
 function showSection(section) {
+
     dashboardSection.classList.add("d-none");
     usersSection.classList.add("d-none");
     propertiesSection.classList.add("d-none");
@@ -34,29 +88,54 @@ function showSection(section) {
     contactsTab.classList.remove("active");
 
     if (section === "dashboard") {
+
         dashboardSection.classList.remove("d-none");
         dashboardTab.classList.add("active");
+
         pageTitle.textContent = "Dashboard";
+
+        loadDashboard();
+
     }
 
     if (section === "users") {
+
         usersSection.classList.remove("d-none");
         usersTab.classList.add("active");
+
         pageTitle.textContent = "Users";
+
+        loadUsers();
+
     }
 
     if (section === "properties") {
+
         propertiesSection.classList.remove("d-none");
         propertiesTab.classList.add("active");
+
         pageTitle.textContent = "Properties";
+
+        loadProperties();
+
     }
 
     if (section === "contacts") {
+
         contactsSection.classList.remove("d-none");
         contactsTab.classList.add("active");
+
         pageTitle.textContent = "Contacts";
+
+        loadContacts();
+
     }
 }
+
+
+/* =========================
+   TAB EVENTS
+========================= */
 
 dashboardTab.addEventListener("click", function () {
     showSection("dashboard");
@@ -64,383 +143,1292 @@ dashboardTab.addEventListener("click", function () {
 
 usersTab.addEventListener("click", function () {
     showSection("users");
-    loadUsers();
 });
 
 propertiesTab.addEventListener("click", function () {
     showSection("properties");
-    loadProperties();
 });
 
 contactsTab.addEventListener("click", function () {
     showSection("contacts");
-    loadContacts();
 });
 
-const usersTableBody = document.getElementById("usersTableBody");
-const userForm = document.getElementById("userForm");
-const userModal = new bootstrap.Modal(document.getElementById("userModal"));
+
+/* =========================
+   LOAD DASHBOARD
+========================= */
+
+async function loadDashboard() {
+
+    try {
+
+        const [usersResponse, propertiesResponse] = await Promise.all([
+            fetch(USERS_API),
+            fetch(PROPERTIES_API)
+        ]);
+
+        const users = await usersResponse.json();
+        const properties = await propertiesResponse.json();
+
+        const contacts = getContacts();
+
+        userCount.textContent = users.length;
+        propertyCount.textContent = properties.length;
+        contactCount.textContent = contacts.length;
+
+    } catch (error) {
+
+        console.error("Dashboard Error:", error);
+
+        userCount.textContent = "0";
+        propertyCount.textContent = "0";
+        contactCount.textContent = getContacts().length;
+    }
+}
+
+
+/* =========================
+   USERS
+========================= */
 
 async function loadUsers() {
+
+    usersTableBody.innerHTML = `
+        <tr>
+            <td colspan="6" class="text-center">
+                Loading users...
+            </td>
+        </tr>
+    `;
+
     try {
+
         const response = await fetch(USERS_API);
 
         if (!response.ok) {
-            throw new Error("Failed to get users");
+            throw new Error("Failed to load users");
         }
 
         const users = await response.json();
 
-        usersTableBody.innerHTML = "";
-        document.getElementById("userCount").textContent = users.length;
+        userCount.textContent = users.length;
 
-        users.forEach(function (user) {
-            usersTableBody.innerHTML += `
+        if (users.length === 0) {
+
+            usersTableBody.innerHTML = `
                 <tr>
-                    <td>${user.id || ""}</td>
-                    <td>${user.name || ""}</td>
-                    <td>${user.email || ""}</td>
-                    <td>${user.phone || ""}</td>
-                    <td>${user.user_type || ""}</td>
-                    <td>
-                        <button class="btn btn-warning btn-sm" onclick="editUser('${user.id}')">
-                            <i class="fa-solid fa-pen"></i>
-                        </button>
-                        <button class="btn btn-danger btn-sm" onclick="deleteUser('${user.id}')">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
+                    <td colspan="6" class="text-center text-muted">
+                        No users found.
                     </td>
                 </tr>
             `;
+
+            return;
+        }
+
+        usersTableBody.innerHTML = "";
+
+        users.forEach(function (user) {
+
+            const row = document.createElement("tr");
+
+            row.innerHTML = `
+                <td>${escapeHTML(user.id)}</td>
+
+                <td>${escapeHTML(user.name || "")}</td>
+
+                <td>${escapeHTML(user.email || "")}</td>
+
+                <td>${escapeHTML(user.phone || "")}</td>
+
+                <td>${escapeHTML(user.user_type || user.userType || "")}</td>
+
+                <td>
+
+                    <button
+                        type="button"
+                        class="btn btn-sm btn-warning me-1"
+                        onclick="editUser('${user.id}')"
+                    >
+                        <i class="fa-solid fa-pen"></i>
+                        Edit
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn btn-sm btn-danger"
+                        onclick="deleteUser('${user.id}')"
+                    >
+                        <i class="fa-solid fa-trash"></i>
+                        Delete
+                    </button>
+
+                </td>
+            `;
+
+            usersTableBody.appendChild(row);
         });
+
     } catch (error) {
-        console.error(error);
+
+        console.error("Users Error:", error);
+
         usersTableBody.innerHTML = `
             <tr>
-                <td colspan="6" class="text-center text-danger">Failed to load users.</td>
+                <td colspan="6" class="text-center text-danger">
+                    Failed to load users.
+                </td>
             </tr>
         `;
     }
 }
 
-document.getElementById("addUserButton").addEventListener("click", function () {
-    userForm.reset();
+
+/* =========================
+   ADD USER
+========================= */
+
+addUserButton.addEventListener("click", function () {
+
+    document.getElementById("userForm").reset();
+
     document.getElementById("userId").value = "";
+
     document.getElementById("userModalTitle").textContent = "Add User";
+
     userModal.show();
 });
 
-userForm.addEventListener("submit", async function (event) {
+
+/* =========================
+   SAVE USER
+========================= */
+
+document.getElementById("userForm").addEventListener("submit", async function (event) {
+
     event.preventDefault();
 
-    const userId = document.getElementById("userId").value;
+    const id = document.getElementById("userId").value;
+
     const userData = {
+
         name: document.getElementById("userName").value.trim(),
+
         email: document.getElementById("userEmail").value.trim(),
+
         password: document.getElementById("userPassword").value.trim(),
+
         phone: document.getElementById("userPhone").value.trim(),
+
         user_type: document.getElementById("userType").value
+
     };
 
+    if (!userData.name || !userData.email || !userData.password) {
+
+        alert("Please fill in all required fields.");
+
+        return;
+    }
+
     try {
+
         let response;
 
-        if (userId) {
-            response = await fetch(`${USERS_API}/${userId}`, {
+        if (id) {
+
+            response = await fetch(`${USERS_API}/${id}`, {
+
                 method: "PUT",
-                headers: { "Content-Type": "application/json" },
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
                 body: JSON.stringify(userData)
+
             });
+
         } else {
+
             response = await fetch(USERS_API, {
+
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
                 body: JSON.stringify(userData)
+
             });
+
         }
 
         if (!response.ok) {
             throw new Error("Failed to save user");
         }
 
+        alert(id ? "User updated successfully." : "User added successfully.");
+
         userModal.hide();
-        await loadUsers();
+
+        loadUsers();
+
+        loadDashboard();
+
     } catch (error) {
-        console.error(error);
+
+        console.error("Save User Error:", error);
+
         alert("Failed to save user.");
     }
 });
 
+
+/* =========================
+   EDIT USER
+========================= */
+
 async function editUser(id) {
+
     try {
+
         const response = await fetch(`${USERS_API}/${id}`);
 
         if (!response.ok) {
-            throw new Error("Failed to get user");
+            throw new Error("Failed to load user");
         }
 
         const user = await response.json();
 
         document.getElementById("userId").value = user.id;
+
         document.getElementById("userName").value = user.name || "";
+
         document.getElementById("userEmail").value = user.email || "";
+
         document.getElementById("userPassword").value = user.password || "";
+
         document.getElementById("userPhone").value = user.phone || "";
-        document.getElementById("userType").value = user.user_type || "user";
+
+        document.getElementById("userType").value =
+            user.user_type ||
+            user.userType ||
+            "Property's Owner";
+
         document.getElementById("userModalTitle").textContent = "Edit User";
 
         userModal.show();
+
     } catch (error) {
-        console.error(error);
-        alert("Failed to get user.");
+
+        console.error("Edit User Error:", error);
+
+        alert("Failed to load user.");
     }
 }
 
+
+/* =========================
+   DELETE USER
+========================= */
+
 async function deleteUser(id) {
-    if (!confirm("Are you sure you want to delete this user?")) {
+
+    const confirmDelete = confirm(
+        "Are you sure you want to delete this user?"
+    );
+
+    if (!confirmDelete) {
         return;
     }
 
     try {
+
         const response = await fetch(`${USERS_API}/${id}`, {
+
             method: "DELETE"
+
         });
 
         if (!response.ok) {
             throw new Error("Failed to delete user");
         }
 
-        await loadUsers();
+        alert("User deleted successfully.");
+
+        loadUsers();
+
+        loadDashboard();
+
     } catch (error) {
-        console.error(error);
+
+        console.error("Delete User Error:", error);
+
         alert("Failed to delete user.");
     }
 }
 
-const propertiesTableBody = document.getElementById("propertiesTableBody");
-const propertyForm = document.getElementById("propertyForm");
-const propertyModal = new bootstrap.Modal(document.getElementById("propertyModal"));
+
+/* =========================
+   PROPERTIES
+========================= */
 
 async function loadProperties() {
+
+    propertiesTableBody.innerHTML = `
+        <tr>
+            <td colspan="9" class="text-center">
+                Loading properties...
+            </td>
+        </tr>
+    `;
+
     try {
+
         const response = await fetch(PROPERTIES_API);
 
         if (!response.ok) {
-            throw new Error("Failed to get properties");
+            throw new Error("Failed to load properties");
         }
 
         const properties = await response.json();
 
-        propertiesTableBody.innerHTML = "";
-        document.getElementById("propertyCount").textContent = properties.length;
+        propertyCount.textContent = properties.length;
 
-        properties.forEach(function (property) {
-            propertiesTableBody.innerHTML += `
+        if (properties.length === 0) {
+
+            propertiesTableBody.innerHTML = `
                 <tr>
-                    <td>${property.id || ""}</td>
-                    <td>${property.property_name || ""}</td>
-                    <td>${property.property_type || ""}</td>
-                    <td>${property.listing_type || ""}</td>
-                    <td>${property.township || ""}</td>
-                    <td>${property.city || ""}</td>
-                    <td>${property.price || ""}</td>
-                    <td>
-                        <button class="btn btn-warning btn-sm" onclick="editProperty('${property.id}')">
-                            <i class="fa-solid fa-pen"></i>
-                        </button>
-                        <button class="btn btn-danger btn-sm" onclick="deleteProperty('${property.id}')">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
+                    <td colspan="9" class="text-center text-muted">
+                        No properties found.
                     </td>
                 </tr>
             `;
-        });
-    } catch (error) {
-        console.error(error);
-        propertiesTableBody.innerHTML = `
-            <tr>
-                <td colspan="8" class="text-center text-danger">Failed to load properties.</td>
-            </tr>
-        `;
-    }
-}
 
-document.getElementById("addPropertyButton").addEventListener("click", function () {
-    propertyForm.reset();
-    document.getElementById("propertyId").value = "";
-    document.getElementById("propertyModalTitle").textContent = "Add Property";
-    propertyModal.show();
-});
-
-propertyForm.addEventListener("submit", async function (event) {
-    event.preventDefault();
-
-    const propertyId = document.getElementById("propertyId").value;
-    const propertyData = {
-        property_name: document.getElementById("propertyName").value.trim(),
-        property_type: document.getElementById("propertyType").value,
-        listing_type: document.getElementById("listingType").value,
-        township: document.getElementById("township").value.trim(),
-        city: document.getElementById("city").value.trim(),
-        address: document.getElementById("address").value.trim(),
-        bed_room: document.getElementById("bedroom").value,
-        bath_number: document.getElementById("bathNumber").value,
-        price: document.getElementById("price").value,
-        image: document.getElementById("propertyImage").value.trim()
-    };
-
-    try {
-        let response;
-
-        if (propertyId) {
-            response = await fetch(`${PROPERTIES_API}/${propertyId}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(propertyData)
-            });
-        } else {
-            response = await fetch(PROPERTIES_API, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(propertyData)
-            });
-        }
-
-        if (!response.ok) {
-            throw new Error("Failed to save property");
-        }
-
-        propertyModal.hide();
-        await loadProperties();
-    } catch (error) {
-        console.error(error);
-        alert("Failed to save property.");
-    }
-});
-
-async function editProperty(id) {
-    try {
-        const response = await fetch(`${PROPERTIES_API}/${id}`);
-
-        if (!response.ok) {
-            throw new Error("Failed to get property");
-        }
-
-        const property = await response.json();
-
-        document.getElementById("propertyId").value = property.id;
-        document.getElementById("propertyName").value = property.property_name || "";
-        document.getElementById("propertyType").value = property.property_type || "Housing";
-        document.getElementById("listingType").value = property.listing_type || "Rent";
-        document.getElementById("township").value = property.township || "";
-        document.getElementById("city").value = property.city || "";
-        document.getElementById("address").value = property.address || "";
-        document.getElementById("bedroom").value = property.bed_room || "";
-        document.getElementById("bathNumber").value = property.bath_number || "";
-        document.getElementById("price").value = property.price || "";
-        document.getElementById("propertyImage").value = property.image || "";
-        document.getElementById("propertyModalTitle").textContent = "Edit Property";
-
-        propertyModal.show();
-    } catch (error) {
-        console.error(error);
-        alert("Failed to get property.");
-    }
-}
-
-async function deleteProperty(id) {
-    if (!confirm("Are you sure you want to delete this property?")) {
-        return;
-    }
-
-    try {
-        const response = await fetch(`${PROPERTIES_API}/${id}`, {
-            method: "DELETE"
-        });
-
-        if (!response.ok) {
-            throw new Error("Failed to delete property");
-        }
-
-        await loadProperties();
-    } catch (error) {
-        console.error(error);
-        alert("Failed to delete property.");
-    }
-}
-
-const contactsTableBody = document.getElementById("contactsTableBody");
-const contactCount = document.getElementById("contactCount");
-const refreshContactsButton = document.getElementById("refreshContactsButton");
-
-function loadContacts() {
-    try {
-        const contacts = JSON.parse(localStorage.getItem(CONTACT_STORAGE_KEY)) || [];
-
-        contactsTableBody.innerHTML = "";
-        contactCount.textContent = contacts.length;
-
-        if (contacts.length === 0) {
-            contactsTableBody.innerHTML = `
-                <tr>
-                    <td colspan="7" class="text-center">No contact messages found.</td>
-                </tr>
-            `;
             return;
         }
 
-        contacts.forEach(function (contact) {
-            contactsTableBody.innerHTML += `
-                <tr>
-                    <td>${contact.id || ""}</td>
-                    <td>${contact.name || ""}</td>
-                    <td>${contact.email || ""}</td>
-                    <td>${contact.subject || ""}</td>
-                    <td class="message-cell">${contact.message || ""}</td>
-                    <td>${contact.date || ""}</td>
-                    <td>
-                        <button class="btn btn-danger btn-sm" onclick="deleteContact(${contact.id})">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
+        propertiesTableBody.innerHTML = "";
+
+        properties.forEach(function (property) {
+
+            const image =
+                property.image1 ||
+                property.image ||
+                "";
+
+            const imageHTML = image
+                ? `
+                    <img
+                        src="${escapeAttribute(image)}"
+                        alt="Property"
+                        style="
+                            width:70px;
+                            height:50px;
+                            object-fit:cover;
+                            border-radius:6px;
+                        "
+                    >
+                  `
+                : `
+                    <span class="text-muted">
+                        No Image
+                    </span>
+                  `;
+
+            const row = document.createElement("tr");
+
+            row.innerHTML = `
+
+                <td>
+                    ${escapeHTML(property.id)}
+                </td>
+
+                <td>
+                    ${imageHTML}
+                </td>
+
+                <td>
+                    ${escapeHTML(property.property_name || "")}
+                </td>
+
+                <td>
+                    ${escapeHTML(property.property_type || "")}
+                </td>
+
+                <td>
+                    ${escapeHTML(property.listing_type || "")}
+                </td>
+
+                <td>
+                    ${escapeHTML(property.township || "")}
+                </td>
+
+                <td>
+                    ${escapeHTML(property.city || "")}
+                </td>
+
+                <td>
+                    ${formatPrice(property.price)}
+                </td>
+
+                <td>
+
+                    <button
+                        type="button"
+                        class="btn btn-sm btn-warning me-1"
+                        onclick="editProperty('${property.id}')"
+                    >
+                        <i class="fa-solid fa-pen"></i>
+                        Edit
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn btn-sm btn-danger"
+                        onclick="deleteProperty('${property.id}')"
+                    >
+                        <i class="fa-solid fa-trash"></i>
+                        Delete
+                    </button>
+
+                </td>
             `;
+
+            propertiesTableBody.appendChild(row);
         });
+
     } catch (error) {
-        console.error("Failed to load contacts:", error);
-        contactCount.textContent = "0";
-        contactsTableBody.innerHTML = `
+
+        console.error("Properties Error:", error);
+
+        propertiesTableBody.innerHTML = `
             <tr>
-                <td colspan="7" class="text-center text-danger">Failed to load contacts.</td>
+                <td colspan="9" class="text-center text-danger">
+                    Failed to load properties.
+                </td>
             </tr>
         `;
     }
 }
 
-function deleteContact(id) {
-    if (!confirm("Are you sure you want to delete this contact?")) {
+
+/* =========================
+   ADD PROPERTY
+========================= */
+
+addPropertyButton.addEventListener("click", function () {
+
+    document.getElementById("propertyForm").reset();
+
+    document.getElementById("propertyId").value = "";
+
+    document.getElementById("propertyModalTitle").textContent =
+        "Add Property";
+
+    document.getElementById("imagePreviewContainer")
+        .classList.add("d-none");
+
+    document.getElementById("imagePreview").src = "";
+
+    propertyModal.show();
+});
+
+
+/* =========================
+   IMAGE PREVIEW
+========================= */
+
+document
+    .getElementById("propertyImage")
+    .addEventListener("change", function (event) {
+
+        const file = event.target.files[0];
+
+        if (!file) {
+
+            document
+                .getElementById("imagePreviewContainer")
+                .classList.add("d-none");
+
+            return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+
+            document.getElementById("imagePreview").src =
+                e.target.result;
+
+            document
+                .getElementById("imagePreviewContainer")
+                .classList.remove("d-none");
+        };
+
+        reader.readAsDataURL(file);
+    });
+
+
+/* =========================
+   IMAGE TO BASE64
+========================= */
+
+function imageToBase64(file) {
+
+    return new Promise(function (resolve, reject) {
+
+        const reader = new FileReader();
+
+        reader.onload = function () {
+            resolve(reader.result);
+        };
+
+        reader.onerror = function () {
+            reject(reader.error);
+        };
+
+        reader.readAsDataURL(file);
+    });
+}
+
+
+/* =========================
+   COMPRESS IMAGE
+========================= */
+
+function compressImage(file) {
+
+    return new Promise(function (resolve, reject) {
+
+        const reader = new FileReader();
+
+        reader.onload = function (event) {
+
+            const image = new Image();
+
+            image.onload = function () {
+
+                const canvas = document.createElement("canvas");
+
+                const maxWidth = 800;
+                const maxHeight = 800;
+
+                let width = image.width;
+                let height = image.height;
+
+                if (width > maxWidth) {
+
+                    height =
+                        height * (maxWidth / width);
+
+                    width = maxWidth;
+                }
+
+                if (height > maxHeight) {
+
+                    width =
+                        width * (maxHeight / height);
+
+                    height = maxHeight;
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+
+                const context =
+                    canvas.getContext("2d");
+
+                context.drawImage(
+                    image,
+                    0,
+                    0,
+                    width,
+                    height
+                );
+
+                resolve(
+                    canvas.toDataURL(
+                        "image/jpeg",
+                        0.7
+                    )
+                );
+            };
+
+            image.onerror = reject;
+
+            image.src = event.target.result;
+        };
+
+        reader.onerror = reject;
+
+        reader.readAsDataURL(file);
+    });
+}
+
+
+/* =========================
+   SAVE PROPERTY
+========================= */
+
+document
+    .getElementById("propertyForm")
+    .addEventListener("submit", async function (event) {
+
+        event.preventDefault();
+
+        const id =
+            document.getElementById("propertyId").value;
+
+        const propertyName =
+            document.getElementById("propertyName").value.trim();
+
+        if (!propertyName) {
+
+            alert("Please enter property name.");
+
+            return;
+        }
+
+        const imageFile =
+            document.getElementById("propertyImage").files[0];
+
+        let image = "";
+
+        if (imageFile) {
+
+            try {
+
+                image = await compressImage(imageFile);
+
+            } catch (error) {
+
+                console.error("Image Error:", error);
+
+                alert("Failed to process image.");
+
+                return;
+            }
+        }
+
+
+        const propertyData = {
+
+            property_name: propertyName,
+
+            property_type:
+                document.getElementById("propertyType").value,
+
+            listing_type:
+                document.getElementById("listingType").value,
+
+            township:
+                document.getElementById("township").value.trim(),
+
+            city:
+                document.getElementById("city").value.trim(),
+
+            bed_room:
+                Number(
+                    document.getElementById("bedroom").value
+                ) || 0,
+
+            bath_number:
+                Number(
+                    document.getElementById("bathNumber").value
+                ) || 0,
+
+            property_area:
+                Number(
+                    document.getElementById("area").value
+                ) || 0,
+
+            floor:
+                Number(
+                    document.getElementById("floor").value
+                ) || 0,
+
+            price:
+                Number(
+                    document.getElementById("price").value
+                ) || 0
+        };
+
+
+        if (image) {
+
+            propertyData.image1 = image;
+
+            propertyData.image = image;
+        }
+
+
+        try {
+
+            let response;
+
+            if (id) {
+
+                response = await fetch(
+                    `${PROPERTIES_API}/${id}`,
+                    {
+                        method: "PUT",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify(propertyData)
+                    }
+                );
+
+            } else {
+
+                response = await fetch(
+                    PROPERTIES_API,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify(propertyData)
+                    }
+                );
+            }
+
+
+            if (!response.ok) {
+
+                const errorText =
+                    await response.text();
+
+                console.error(errorText);
+
+                throw new Error(
+                    "Failed to save property"
+                );
+            }
+
+
+            alert(
+                id
+                    ? "Property updated successfully."
+                    : "Property added successfully."
+            );
+
+            propertyModal.hide();
+
+            loadProperties();
+
+            loadDashboard();
+
+        } catch (error) {
+
+            console.error(
+                "Save Property Error:",
+                error
+            );
+
+            alert(
+                "Failed to save property. Please try again."
+            );
+        }
+
+    });
+
+
+/* =========================
+   EDIT PROPERTY
+========================= */
+
+async function editProperty(id) {
+
+    try {
+
+        const response =
+            await fetch(`${PROPERTIES_API}/${id}`);
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Failed to load property"
+            );
+        }
+
+        const property =
+            await response.json();
+
+
+        document.getElementById("propertyId").value =
+            property.id || "";
+
+
+        document.getElementById("propertyName").value =
+            property.property_name || "";
+
+
+        document.getElementById("propertyType").value =
+            property.property_type || "Housing";
+
+
+        document.getElementById("listingType").value =
+            property.listing_type || "Rent";
+
+
+        document.getElementById("township").value =
+            property.township || "";
+
+
+        document.getElementById("city").value =
+            property.city || "";
+
+
+        document.getElementById("bedroom").value =
+            property.bed_room || 0;
+
+
+        document.getElementById("bathNumber").value =
+            property.bath_number || 0;
+
+
+        document.getElementById("area").value =
+            property.property_area || 0;
+
+
+        document.getElementById("floor").value =
+            property.floor || 0;
+
+
+        document.getElementById("price").value =
+            property.price || 0;
+
+
+        const image =
+            property.image1 ||
+            property.image ||
+            "";
+
+
+        if (image) {
+
+            document.getElementById("imagePreview").src =
+                image;
+
+            document
+                .getElementById("imagePreviewContainer")
+                .classList.remove("d-none");
+
+        } else {
+
+            document
+                .getElementById("imagePreviewContainer")
+                .classList.add("d-none");
+        }
+
+
+        document.getElementById("propertyModalTitle").textContent =
+            "Edit Property";
+
+
+        propertyModal.show();
+
+    } catch (error) {
+
+        console.error(
+            "Edit Property Error:",
+            error
+        );
+
+        alert(
+            "Failed to load property."
+        );
+    }
+}
+
+
+/* =========================
+   DELETE PROPERTY
+========================= */
+
+async function deleteProperty(id) {
+
+    const confirmDelete =
+        confirm(
+            "Are you sure you want to delete this property?"
+        );
+
+    if (!confirmDelete) {
         return;
     }
 
-    let contacts = JSON.parse(localStorage.getItem(CONTACT_STORAGE_KEY)) || [];
-    contacts = contacts.filter(function (contact) {
-        return contact.id !== id;
-    });
 
-    localStorage.setItem(CONTACT_STORAGE_KEY, JSON.stringify(contacts));
-    loadContacts();
-    alert("Contact deleted successfully.");
+    try {
+
+        const response =
+            await fetch(
+                `${PROPERTIES_API}/${id}`,
+                {
+                    method: "DELETE"
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Failed to delete property"
+            );
+        }
+
+
+        alert(
+            "Property deleted successfully."
+        );
+
+
+        loadProperties();
+
+        loadDashboard();
+
+    } catch (error) {
+
+        console.error(
+            "Delete Property Error:",
+            error
+        );
+
+        alert(
+            "Failed to delete property."
+        );
+    }
 }
 
-refreshContactsButton.addEventListener("click", function () {
+
+/* =========================
+   CONTACTS
+========================= */
+
+function getContacts() {
+
+    try {
+
+        const data =
+            localStorage.getItem(
+                CONTACT_STORAGE_KEY
+            );
+
+        if (!data) {
+            return [];
+        }
+
+        const contacts =
+            JSON.parse(data);
+
+        return Array.isArray(contacts)
+            ? contacts
+            : [];
+
+    } catch (error) {
+
+        console.error(
+            "Contact Storage Error:",
+            error
+        );
+
+        return [];
+    }
+}
+
+
+/* =========================
+   LOAD CONTACTS
+========================= */
+
+function loadContacts() {
+
+    const contacts =
+        getContacts();
+
+    contactCount.textContent =
+        contacts.length;
+
+
+    if (contacts.length === 0) {
+
+        contactsTableBody.innerHTML = `
+            <tr>
+                <td
+                    colspan="7"
+                    class="text-center text-muted"
+                >
+                    No contact messages found.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+
+    contactsTableBody.innerHTML = "";
+
+
+    contacts.forEach(function (contact, index) {
+
+        const row =
+            document.createElement("tr");
+
+
+        const date =
+            contact.date ||
+            contact.createdAt ||
+            new Date().toLocaleString();
+
+
+        row.innerHTML = `
+
+            <td>
+                ${escapeHTML(
+                    contact.id ||
+                    index + 1
+                )}
+            </td>
+
+            <td>
+                ${escapeHTML(
+                    contact.name ||
+                    ""
+                )}
+            </td>
+
+            <td>
+                ${escapeHTML(
+                    contact.email ||
+                    ""
+                )}
+            </td>
+
+            <td>
+                ${escapeHTML(
+                    contact.subject ||
+                    ""
+                )}
+            </td>
+
+            <td
+                style="
+                    max-width:300px;
+                    white-space:normal;
+                    word-break:break-word;
+                "
+            >
+                ${escapeHTML(
+                    contact.message ||
+                    ""
+                )}
+            </td>
+
+            <td>
+                ${escapeHTML(
+                    date
+                )}
+            </td>
+
+            <td>
+
+                <button
+                    type="button"
+                    class="btn btn-sm btn-danger"
+                    onclick="deleteContact(${index})"
+                >
+                    <i class="fa-solid fa-trash"></i>
+                    Delete
+                </button>
+
+            </td>
+
+        `;
+
+
+        contactsTableBody.appendChild(row);
+
+    });
+}
+
+
+/* =========================
+   DELETE CONTACT
+========================= */
+
+function deleteContact(index) {
+
+    const confirmDelete =
+        confirm(
+            "Are you sure you want to delete this message?"
+        );
+
+    if (!confirmDelete) {
+        return;
+    }
+
+
+    const contacts =
+        getContacts();
+
+
+    contacts.splice(
+        index,
+        1
+    );
+
+
+    localStorage.setItem(
+        CONTACT_STORAGE_KEY,
+        JSON.stringify(contacts)
+    );
+
+
     loadContacts();
-});
 
-document.getElementById("logoutButton").addEventListener("click", function () {
-    localStorage.removeItem("admin");
-    window.location.href = "login.html";
-});
+    loadDashboard();
 
-loadUsers();
-loadProperties();
-loadContacts();
+
+    alert(
+        "Contact message deleted successfully."
+    );
+}
+
+
+/* =========================
+   REFRESH CONTACTS
+========================= */
+
+refreshContactsButton.addEventListener(
+    "click",
+    function () {
+
+        loadContacts();
+
+        loadDashboard();
+
+    }
+);
+
+
+/* =========================
+   LOGOUT
+========================= */
+
+logoutButton.addEventListener(
+    "click",
+    function () {
+
+        const confirmLogout =
+            confirm(
+                "Are you sure you want to logout?"
+            );
+
+        if (!confirmLogout) {
+            return;
+        }
+
+
+        localStorage.removeItem(
+            "admin"
+        );
+
+
+        window.location.href =
+            "login.html";
+
+    }
+);
+
+
+/* =========================
+   FORMAT PRICE
+========================= */
+
+function formatPrice(price) {
+
+    if (
+        price === null ||
+        price === undefined ||
+        price === ""
+    ) {
+
+        return "$0";
+    }
+
+
+    const number =
+        Number(price);
+
+
+    if (isNaN(number)) {
+
+        return escapeHTML(
+            String(price)
+        );
+    }
+
+
+    return "$" +
+        number.toLocaleString();
+}
+
+
+/* =========================
+   HTML SECURITY
+========================= */
+
+function escapeHTML(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+
+        return "";
+    }
+
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+/* =========================
+   ATTRIBUTE SECURITY
+========================= */
+
+function escapeAttribute(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+
+        return "";
+    }
+
+
+    return String(value)
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+/* =========================
+   INITIAL LOAD
+========================= */
+
+loadDashboard();

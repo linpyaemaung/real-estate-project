@@ -36,7 +36,7 @@ fetch(API_URL)
                 <td>${item.bath_number || "N/A"}</td>
                 <td>${item.floor || "N/A"}</td>
                 <td>${item.property_area || "N/A"}</td>
-                <td>${item.price || "N/A"}</td>
+                <td>${item.property_area || "N/A"}</td>
                 <td>${item.image1 ? `<img src="${item.image1}" alt="${item.property_name || "Property Image"}" width="100" height="70" style="object-fit: cover; border-radius: 5px;">` : `<span class="text-muted">No Image</span>`}</td>
                 <td>
                     <div class="d-flex gap-2">

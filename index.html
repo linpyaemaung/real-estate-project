@@ -5,15 +5,215 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Home | Real Estate</title>
   <link rel="icon" type="image/png" href="logo/logo.png">
-  <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+  <style>
+    .cover {
+min-height: 570px;
+position: relative;
+display: flex;
+align-items: center;
+background-image: url("images/cover.jpeg");
+background-size: cover;
+background-position: center;
+overflow: hidden;
+}
+
+.cover-overlay {
+position: absolute;
+inset: 0;
+background: linear-gradient(
+90deg,
+rgba(0, 0, 0, 0.72),
+rgba(0, 0, 0, 0.35),
+rgba(0, 0, 0, 0.15)
+);
+}
+
+
+
+.cover .container {
+position: relative;
+z-index: 2;
+}
+
+.cover-content {
+max-width: 650px;
+color: white;
+padding: 80px 0;
+}
+
+.cover-subtitle {
+display: inline-block;
+font-size: 12px;
+font-weight: 700;
+letter-spacing: 2px;
+margin-bottom: 18px;
+padding: 8px 14px;
+border: 1px solid rgba(255, 255, 255, 0.4);
+border-radius: 30px;
+background: rgba(255, 255, 255, 0.08);
+-webkit-backdrop-filter: blur(5px);
+backdrop-filter: blur(5px);
+}
+.cover h1 {
+font-size: 58px;
+line-height: 1.1;
+font-weight: 700;
+margin-bottom: 20px;
+}
+
+.cover h1 span {
+display: block;
+}
+
+
+
+.cover p {
+max-width: 560px;
+font-size: 16px;
+line-height: 1.8;
+color: rgba(255, 255, 255, 0.9);
+margin-bottom: 30px;
+}
+
+
+
+.cover-buttons {
+display: flex;
+gap: 12px;
+flex-wrap: wrap;
+}
+
+.cover-btn,
+.cover-btn-outline {
+display: inline-flex;
+align-items: center;
+gap: 10px;
+padding: 13px 22px;
+border-radius: 8px;
+text-decoration: none;
+font-size: 14px;
+font-weight: 600;
+transition: all 0.3s ease;
+}
+
+.cover-btn {
+background: white;
+color: #212529;
+}
+
+.cover-btn:hover {
+color: #212529;
+transform: translateY(-3px);
+box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.cover-btn i {
+transition: 0.3s ease;
+}
+
+.cover-btn:hover i {
+transform: translateX(4px);
+}
+
+.cover-btn-outline {
+color: white;
+border: 1px solid rgba(255, 255, 255, 0.7);
+background: rgba(255, 255, 255, 0.08);
+-webkit-backdrop-filter: blur(5px);
+backdrop-filter: blur(5px);
+}
+
+.cover-btn-outline:hover {
+color: #212529;
+background: white;
+border-color: white;
+}
+
+
+@media (max-width: 768px) {
+
+.cover {
+    min-height: 500px;
+    background-position: center;
+}
+
+.cover-content {
+    max-width: 550px;
+    padding: 60px 25px;
+}
+
+.cover h1 {
+    font-size: 45px;
+}
+.search-section {
+    position: absolute;
+    top: 70%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 700%;
+    max-width: 90%;
+    padding: 20px;
+    border-radius:12px;
+    background-color:white;
+}
+}
+
+
+@media (max-width: 576px) {
+
+.cover {
+    min-height: 500px;
+    background-position: center;
+}
+
+.cover-content {
+    width: 92%;
+    max-width: 390px;
+    margin: auto;
+    padding: 50px 0;
+}
+
+.cover-subtitle {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    padding: 7px 11px;
+}
+
+.cover h1 {
+    font-size: 36px;
+    line-height: 1.15;
+    margin-bottom: 15px;
+}
+
+.cover p {
+    font-size: 13px;
+    line-height: 1.7;
+    margin-bottom: 24px;
+}
+
+.cover-buttons {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.cover-btn,
+.cover-btn-outline {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 18px;
+}
+}
+  </style>
 </head>
 <body>
   <nav class="navbar navbar-expand-lg bgcolor sticky-top">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#"><div class="text-white">Real Estate</div></a>
+      <a class="navbar-brand" style="margin-left: 25px;" href="#"><div class="text-white ">Real Estate</div></a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <i class="fa-solid fa-bars"></i>
       </button>
@@ -32,131 +232,163 @@
             <a class="nav-link" href="pages/contactus.html">Contact Us</a>
           </li>
         </ul>
-        <div class="d-flex">
-          <button type="button" class="login-btn">
-            <a href="users/login.html"><i class="fa-regular fa-user"></i> Login</a>
-          </button>
+        <div class="d-flex align-items-center" id="authArea">
+            <button type="button" class="login-btn">
+                <a href="pages/users/login.html">
+                    <i class="fa-regular fa-user"></i> Login
+                </a>
+            </button>
         </div>
       </div>
     </div>
   </nav>
-
   <div class="cover">
+  <div class="cover-overlay"></div>
     <div class="container">
-        <div class="search-section p-4 bg-white rounded-3 shadow-sm">
-          <h3 class="text-dark text-center mb-3 fw-bold">Find Your Dream Home</h3>
-          <div class="row g-2 align-items-center">
-              <div class="col-md-4">
-                  <input type="text" id="townshipSearch" class="form-control" placeholder="Township">
-              </div>
-              <div class="col-md-4">
-                  <input type="text" id="citySearch" class="form-control"  placeholder="City">
-              </div>
-              <div class="col-md-3">
-                  <select id="typeSearch" class="form-select">
-                      <option value=""> All Listing Types </option>
-                      <option value="sale"> Sale </option>
-                      <option value="rent">  Rent </option>
-                  </select>
-              </div>
-              <div class="col-md-1">
-                  <button type="button" class="btn btn-dark w-100" onclick="searchProperty()"> Search </button>
-              </div>
-          </div>
+        <div class="cover-content">
+
+            <span class="cover-subtitle">
+                FIND YOUR PERFECT PROPERTY
+            </span>
+            <h1>
+                Find Your <span>Dream Home</span>
+            </h1>
+            <p>
+                Discover beautiful properties in great locations.
+                Find the perfect place to live, rent, or invest.
+            </p>
+            <div class="cover-buttons">
+                <a href="pages/properties.html" class="cover-btn">
+                    Explore Properties
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+                <a href="pages/aboutus.html" class="cover-btn-outline">
+                    Learn More
+                </a>
+            </div>
         </div>
     </div>
   </div>
-  <div class="properties mt-4">
-    <h3>Latest Properties</h3>
-    <div id="propertyContainer" class="row"></div>
-    <div id="propertyTemplate" class="property-card col-md-4 mt-3 d-none">
-      <div class="card h-100 shadow-sm">
-        <img class="property-image img-fluid mb-2" style="height: 200px; width: 100%; object-fit: cover;">
-        <div class="property-info p-3 d-flex flex-column justify-content-between">
-          <div>
-            <div class="d-flex align-items-center justify-content-between mb-2">
-              <span class="badge bg-warning text-white text-uppercase listing_type"></span>
-            </div>
-            <div class="d-flex align-items-center justify-content-between mb-2">
-              <span class="badge bg-dark text-white text-uppercase px-2 py-1 property_type"></span>
-            </div>
-            <div class="row">
-              <div class="col">
-                <h5 class="property-name fw-bold"></h5>
-              </div>
-              <div class="col-5 text-end">
-                <p class="property-price fw-bold"></p>
-              </div>
-            </div>
-            <div class="location mt-1">
-              <i class="fa-solid fa-location-dot"></i>
-              <span class="property-location text-muted small"></span>
+  <div class="container">
+    <section class="features-section py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="features-subtitle">OUR FEATURES</span>
+            <h2 class="features-title">What We Provide</h2>
+            <p class="features-description">
+                We provide simple and useful services to help users
+                find and manage properties with confidence.
+            </p>
+        </div>
+        <div class="row g-4 justify-content-center">
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="feature-card text-center">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-house"></i>
+                    </div>
+                    <h4>Find Properties</h4>
+                    <p>
+                        Browse a variety of properties and easily
+                        search for homes, apartments, land, and condos
+                        based on your needs.
+                    </p>
+                </div>
             </div>
 
-            <div class="row text-center mt-2">
-              <div class="col-3">
-                <i class="fa-solid fa-bed"></i>
-                <span class="property-bed"></span> beds
-              </div>
-              <div class="col-3 border-start">
-                <i class="fa-solid fa-bath"></i>
-                <span class="property-bath"></span> baths
-              </div>
-              <div class="col-3 border-start">
-                <i class="fa-regular fa-square me-1"></i>
-                <span class="property-area"></span> sqft
-              </div>
-              <div class="col-3 border-start">
-                <i class="fa-solid fa-stairs me-1"></i>
-                <span class="property-floor"></span> floors
-              </div>
+
+    
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="feature-card text-center">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-building"></i>
+                    </div>
+                    <h4>Manage Properties</h4>
+                    <p>
+                        Property owners can add, edit, and manage
+                        their property listings with important
+                        information and images.
+                    </p>
+                </div>
             </div>
-          </div>
+
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="feature-card text-center">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-headset"></i>
+                    </div>
+                    <h4>Easy Communication</h4>
+                    <p>
+                        Contact us easily with your questions,
+                        property requests, or other information
+                        through our contact form.
+                    </p>
+                </div>
+            </div>
         </div>
-         <div class="card-footer">
-              <small class="property-author text-body-secondary"></small>
-         </div>
-      </div>
     </div>
+    </section>
   </div>
-  <div class="categories mt-4">
-    <h3>Our Categories</h3>
-    <div class="row">
-    <div class="col-sm mb-3">
-      <div class="card border-0">
-        <div class="card-body">
-          <h5 class="card-title text-center fw-bold">Buy</h5>
-            <p class="card-text">
-            Find properties available for purchase and explore houses, apartments, condos, and land. Check property prices, locations, and details to compare different options. 
+  <div class="container">
+  <div class="categories">
+      <div class="text-center mb-4">
+          <span class="category-subtitle">EXPLORE PROPERTIES</span>
+          <h3 class="category-title">Our Categories</h3>
+          <p class="category-description">
+              Explore properties based on what you are looking for.
           </p>
-        </div>
       </div>
-    </div>
-    <div class="col-sm mb-3">
-      <div class="card border-0">
-        <div class="card-body">
-          <h5 class="card-title text-center fw-bold">Sell</h5>
-          <p class="card-text">
-            List your property for sale with ease. Add details, photos, and location information. Reach people looking for a new property. Sell your property with a simple and easy process.
-          </p>
-        </div>
+
+      <div class="row g-4">
+          <div class="col-12 col-md-6 col-lg-4">
+              <div class="category-card">
+                  <div class="category-icon">
+                      <i class="fa-solid fa-house"></i>
+                  </div>
+                  <h5>Buy</h5>
+                  <p>
+                      Find properties available for purchase and explore
+                      houses, apartments, condos, and land. Check property
+                      prices, locations, and details to compare different
+                      options.
+                  </p>
+              </div>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4">
+              <div class="category-card">
+                  <div class="category-icon">
+                      <i class="fa-solid fa-tag"></i>
+                  </div>
+                  <h5>Sell</h5>
+                  <p>
+                      List your property for sale with ease. Add details,
+                      photos, and location information. Reach people looking
+                      for a new property with a simple and easy process.
+                  </p>
+              </div>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4">
+              <div class="category-card">
+                  <div class="category-icon">
+                      <i class="fa-solid fa-key"></i>
+                  </div>
+                  <h5>Rent</h5>
+                  <p>
+                      Find properties available for rent. Explore homes in
+                      your preferred location, check rental prices and
+                      property details, and choose a comfortable place
+                      that suits your needs.
+                  </p>
+              </div>
+          </div>
       </div>
-    </div>
-      <div class="col-sm">
-      <div class="card border-0">
-        <div class="card-body">
-          <h5 class="card-title text-center fw-bold">Rent</h5>
-          <p class="card-text">
-            Find properties available for rent. Explore homes in your preferred location. Check rental prices and property details. Choose a comfortable place that suits your needs.
-          </p>
-        </div>
-      </div>
-    </div>
   </div>
   </div>
 
-  <div class="faq">
-  <h3>Frequently Asked Questions</h3>
+   <div class="container">
+      <div class="faq">
+    <h3>Frequently Asked Questions</h3>
     <div class="faq-container">
       <div class="faq-question">
         <h6>What types of properties do you sell?</h6>
@@ -214,24 +446,82 @@
         </div>
     </div>
   </div>
-  <footer>
-      <div class="row mt-3">
-        <div class="col-9">
-          <h5>Real Estate</h5>
-          <p>Supporting visitors in making confident and well-informed property decisions</p>
+   </div>
+  <footer class="modern-footer">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-12 col-md-5">
+                    <div class="footer-brand">
+                        <h4>Real Estate</h4>
+                        <p>
+                            Supporting visitors in making confident and
+                            well-informed property decisions.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <h5 class="footer-title">Quick Links</h5>
+                    <ul class="footer-links">
+                        <li>
+                            <a href="index.html">
+                                <i class="fa-solid fa-angle-right"></i>
+                                Home
+                            </a>
+                        </li>
+                        <li>
+                            <a href="properties.html">
+                                <i class="fa-solid fa-angle-right"></i>
+                                Properties
+                            </a>
+                        </li>
+                        <li>
+                            <a href="aboutus.html">
+                                <i class="fa-solid fa-angle-right"></i>
+                                About Us
+                            </a>
+                        </li>
+                        <li>
+                            <a href="contactus.html">
+                                <i class="fa-solid fa-angle-right"></i>
+                                Contact Us
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-12 col-md-4">
+                    <h5 class="footer-title">Contact Us</h5>
+                    <div class="footer-contact">
+                        <p>
+                            <i class="fa-regular fa-envelope"></i>
+                            <a href="mailto:linpyaemg.lpmaung@gmail.com">
+                                linpyaemg.lpmaung@gmail.com
+                            </a>
+                        </p>
+
+                        <p>
+                            <i class="fa-solid fa-phone"></i>
+                            <a href="tel:+959259294449">
+                                +95 925 929 4449
+                            </a>
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>
+                    © 2026 Real Estate. All Rights Reserved.
+                </p>
+                <p>
+                    Find your dream property with confidence.
+                </p>
+            </div>
+
         </div>
-        <div class="col">
-          <h5>Contact</h5>
-          <p>Email:linpyaemg.lpmaung@gmail.com</p>
-          <p>Phone: +95259294449</p>
-        </div>
-      </div>
-      </div>
   </footer>
-  <div class="sub-footer text-center text-white p-2">
-    © 2026 Real Estate. All rights reserved
-  </div>
   <script src="js/script.js"></script>
+  <script src="js/user/login.js"></script>
+  <script src="js/navbar.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
