@@ -58,9 +58,6 @@ const userModal = new bootstrap.Modal(userModalElement);
 const propertyModal = new bootstrap.Modal(propertyModalElement);
 
 
-/* =========================
-   ADMIN NAME
-========================= */
 
 if (adminName) {
     adminName.textContent =
@@ -70,10 +67,6 @@ if (adminName) {
         "Admin";
 }
 
-
-/* =========================
-   SECTION CONTROL
-========================= */
 
 function showSection(section) {
 
@@ -133,9 +126,6 @@ function showSection(section) {
 }
 
 
-/* =========================
-   TAB EVENTS
-========================= */
 
 dashboardTab.addEventListener("click", function () {
     showSection("dashboard");
@@ -154,9 +144,7 @@ contactsTab.addEventListener("click", function () {
 });
 
 
-/* =========================
-   LOAD DASHBOARD
-========================= */
+
 
 async function loadDashboard() {
 
@@ -187,117 +175,7 @@ async function loadDashboard() {
 }
 
 
-/* =========================
-   USERS
-========================= */
-
-async function loadUsers() {
-
-    usersTableBody.innerHTML = `
-        <tr>
-            <td colspan="6" class="text-center">
-                Loading users...
-            </td>
-        </tr>
-    `;
-
-    try {
-
-        const response = await fetch(USERS_API);
-
-        if (!response.ok) {
-            throw new Error("Failed to load users");
-        }
-
-        const users = await response.json();
-
-        userCount.textContent = users.length;
-
-        if (users.length === 0) {
-
-            usersTableBody.innerHTML = `
-                <tr>
-                    <td colspan="6" class="text-center text-muted">
-                        No users found.
-                    </td>
-                </tr>
-            `;
-
-            return;
-        }
-
-        usersTableBody.innerHTML = "";
-
-        users.forEach(function (user) {
-
-            const row = document.createElement("tr");
-
-            row.innerHTML = `
-                <td>${escapeHTML(user.id)}</td>
-
-                <td>${escapeHTML(user.name || "")}</td>
-
-                <td>${escapeHTML(user.email || "")}</td>
-
-                <td>${escapeHTML(user.phone || "")}</td>
-
-                <td>${escapeHTML(user.user_type || user.userType || "")}</td>
-
-                <td>
-
-                    <button
-                        type="button"
-                        class="btn btn-sm btn-warning me-1"
-                        onclick="editUser('${user.id}')"
-                    >
-                        <i class="fa-solid fa-pen"></i>
-                        Edit
-                    </button>
-
-                    <button
-                        type="button"
-                        class="btn btn-sm btn-danger"
-                        onclick="deleteUser('${user.id}')"
-                    >
-                        <i class="fa-solid fa-trash"></i>
-                        Delete
-                    </button>
-
-                </td>
-            `;
-
-            usersTableBody.appendChild(row);
-        });
-
-    } catch (error) {
-
-        console.error("Users Error:", error);
-
-        usersTableBody.innerHTML = `
-            <tr>
-                <td colspan="6" class="text-center text-danger">
-                    Failed to load users.
-                </td>
-            </tr>
-        `;
-    }
-}
-
-
-/* =========================
-   ADD USER
-========================= */
-
-addUserButton.addEventListener("click", function () {
-
-    document.getElementById("userForm").reset();
-
-    document.getElementById("userId").value = "";
-
-    document.getElementById("userModalTitle").textContent = "Add User";
-
-    userModal.show();
-});
+async function loadUsers() { if (!usersTableBody) { return; } usersTableBody.innerHTML = ` <tr> <td colspan="7" class="text-center"> Loading users... </td> </tr> `; try { const response = await fetch(USERS_API); if (!response.ok) { throw new Error("Failed to fetch users"); } const users = await response.json(); if (userCount) { userCount.textContent = users.length; } if (users.length === 0) { usersTableBody.innerHTML = ` <tr> <td colspan="7" class="text-center"> No users found. </td> </tr> `; return; } usersTableBody.innerHTML = ""; users.forEach(function (user) { const profileImage = user.profile_image || user.profileImage || user.image || user.profile || ""; const imageHTML = profileImage ? ` <img src="${escapeAttribute(profileImage)}" alt="Profile" style=" width:50px; height:50px; object-fit:cover; border-radius:50%; border:1px solid #ddd; " onerror="this.src='../../logo/logo.png'" > ` : ` <img src="../../logo/logo.png" alt="Profile" style=" width:50px; height:50px; object-fit:cover; border-radius:50%; border:1px solid #ddd; " > `; const row = document.createElement("tr"); row.innerHTML = ` <td>${escapeHTML(user.id)}</td> <td> ${imageHTML} </td> <td> ${escapeHTML(user.name || "-")} </td> <td> ${escapeHTML(user.email || "-")} </td> <td> ${escapeHTML(user.phone || "-")} </td> <td> ${escapeHTML(user.user_type || "-")} </td> <td> <button class="btn btn-sm btn-warning me-1 edit-user" data-id="${escapeAttribute(user.id)}" > <i class="fa-solid fa-pen"></i> </button> <button class="btn btn-sm btn-danger delete-user" data-id="${escapeAttribute(user.id)}" > <i class="fa-solid fa-trash"></i> </button> </td> `; usersTableBody.appendChild(row); }); document.querySelectorAll(".edit-user").forEach(function (button) { button.addEventListener("click", function () { const id = this.getAttribute("data-id"); editUser(id); }); }); document.querySelectorAll(".delete-user").forEach(function (button) { button.addEventListener("click", function () { const id = this.getAttribute("data-id"); deleteUser(id); }); }); } catch (error) { console.error("Users Error:", error); usersTableBody.innerHTML = ` <tr> <td colspan="7" class="text-center text-danger"> Failed to load users. </td> </tr> `; } } /* ========================= IMAGE TO BASE64 ========================= */ function imageToBase64(file) { return new Promise(function (resolve, reject) { const reader = new FileReader(); reader.onload = function () { resolve(reader.result); }; reader.onerror = function () { reject(new Error("Failed to read image")); }; reader.readAsDataURL(file); }); } /* ========================= COMPRESS PROFILE IMAGE ========================= */ function compressProfileImage(file) { return new Promise(function (resolve, reject) { const reader = new FileReader(); reader.onload = function (event) { const image = new Image(); image.onload = function () { const maxWidth = 400; const maxHeight = 400; let width = image.width; let height = image.height; if (width > maxWidth || height > maxHeight) { const ratio = Math.min( maxWidth / width, maxHeight / height ); width = Math.round(width * ratio); height = Math.round(height * ratio); } const canvas = document.createElement("canvas"); canvas.width = width; canvas.height = height; const context = canvas.getContext("2d"); context.drawImage( image, 0, 0, width, height ); const compressedImage = canvas.toDataURL( "image/jpeg", 0.75 ); resolve(compressedImage); }; image.onerror = function () { reject(new Error("Invalid image")); }; image.src = event.target.result; }; reader.onerror = function () { reject(new Error("Failed to read image")); }; reader.readAsDataURL(file); }); } /* ========================= PROFILE IMAGE PREVIEW ========================= */ const userProfileImage = document.getElementById("userProfileImage"); const userProfilePreviewContainer = document.getElementById("userProfilePreviewContainer"); const userProfilePreview = document.getElementById("userProfilePreview"); if (userProfileImage) { userProfileImage.addEventListener("change", function () { const file = this.files[0]; if (!file) { return; } if (!file.type.startsWith("image/")) { alert("Please select an image file."); this.value = ""; if (userProfilePreviewContainer) { userProfilePreviewContainer.classList.add("d-none"); } return; } const reader = new FileReader(); reader.onload = function (event) { if (userProfilePreview) { userProfilePreview.src = event.target.result; } if (userProfilePreviewContainer) { userProfilePreviewContainer.classList.remove("d-none"); } }; reader.readAsDataURL(file); }); } /* ========================= ADD USER BUTTON ========================= */ addUserButton?.addEventListener("click", function () { const userForm = document.getElementById("userForm"); if (userForm) { userForm.reset(); } const userId = document.getElementById("userId"); if (userId) { userId.value = ""; } const title = document.getElementById("userModalTitle"); if (title) { title.textContent = "Add User"; } if (userProfilePreview) { userProfilePreview.src = ""; } if (userProfilePreviewContainer) { userProfilePreviewContainer.classList.add("d-none"); } if (userModal) { userModal.show(); } }); /* ========================= SAVE USER ========================= */ const userForm = document.getElementById("userForm"); userForm?.addEventListener("submit", async function (event) { event.preventDefault(); const userId = document.getElementById("userId")?.value.trim(); const name = document.getElementById("userName")?.value.trim(); const email = document.getElementById("userEmail")?.value.trim(); const password = document.getElementById("userPassword")?.value.trim(); const phone = document.getElementById("userPhone")?.value.trim(); const userType = document.getElementById("userType")?.value; const imageInput = document.getElementById("userProfileImage"); const selectedFile = imageInput?.files?.[0]; try { let profileImage = ""; /* * ADD USER * If an image is selected, compress and convert to Base64. */ if (selectedFile) { if (!selectedFile.type.startsWith("image/")) { alert("Please select a valid image."); return; } profileImage = await compressProfileImage(selectedFile); } const userData = { name: name, profile_image: profileImage, email: email, password: password, phone: phone, user_type: userType }; /* * EDIT USER * If no new image is selected, * keep the old profile_image. */ if (userId) { if (!selectedFile) { const oldResponse = await fetch(`${USERS_API}/${userId}`); if (!oldResponse.ok) { throw new Error("Failed to get old user"); } const oldUser = await oldResponse.json(); userData.profile_image = oldUser.profile_image || oldUser.profileImage || oldUser.image || oldUser.profile || ""; } const response = await fetch( `${USERS_API}/${userId}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(userData) } ); if (!response.ok) { throw new Error("Failed to update user"); } alert("User updated successfully."); } else { const response = await fetch( USERS_API, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(userData) } ); if (!response.ok) { throw new Error("Failed to create user"); } alert("User created successfully."); } if (userModal) { userModal.hide(); } userForm.reset(); if (userProfilePreview) { userProfilePreview.src = ""; } if (userProfilePreviewContainer) { userProfilePreviewContainer.classList.add("d-none"); } loadUsers(); loadDashboard(); } catch (error) { console.error("Save User Error:", error); alert( "Failed to save user.\n\n" + "Please check the image size and try again." ); } });
 
 
 /* =========================
@@ -305,64 +183,61 @@ addUserButton.addEventListener("click", function () {
 ========================= */
 
 document.getElementById("userForm").addEventListener("submit", async function (event) {
-
     event.preventDefault();
 
     const id = document.getElementById("userId").value;
 
+
+    const userImageInput = document.getElementById("userImage");
+    let imageBase64 = "";
+
+    if (userImageInput && userImageInput.files && userImageInput.files[0]) {
+        try {
+            imageBase64 = await convertFileToBase64(userImageInput.files[0]);
+        } catch (err) {
+            console.error("Error converting image:", err);
+        }
+    } else {
+       
+        const previewImg = document.getElementById("userImagePreview");
+        if (previewImg && previewImg.src && !previewImg.src.includes("via.placeholder.com")) {
+            imageBase64 = previewImg.src;
+        }
+    }
+
     const userData = {
-
         name: document.getElementById("userName").value.trim(),
-
         email: document.getElementById("userEmail").value.trim(),
-
         password: document.getElementById("userPassword").value.trim(),
-
         phone: document.getElementById("userPhone").value.trim(),
-
-        user_type: document.getElementById("userType").value
-
+        user_type: document.getElementById("userType").value,
+        profile_image: imageBase64
     };
 
     if (!userData.name || !userData.email || !userData.password) {
-
         alert("Please fill in all required fields.");
-
         return;
     }
 
     try {
-
         let response;
 
         if (id) {
-
             response = await fetch(`${USERS_API}/${id}`, {
-
                 method: "PUT",
-
                 headers: {
                     "Content-Type": "application/json"
                 },
-
                 body: JSON.stringify(userData)
-
             });
-
         } else {
-
             response = await fetch(USERS_API, {
-
                 method: "POST",
-
                 headers: {
                     "Content-Type": "application/json"
                 },
-
                 body: JSON.stringify(userData)
-
             });
-
         }
 
         if (!response.ok) {
@@ -371,60 +246,87 @@ document.getElementById("userForm").addEventListener("submit", async function (e
 
         alert(id ? "User updated successfully." : "User added successfully.");
 
-        userModal.hide();
+        if (typeof userModal !== "undefined" && userModal.hide) {
+            userModal.hide();
+        }
 
-        loadUsers();
+        if (typeof loadUsers === "function") {
+            loadUsers();
+        }
 
-        loadDashboard();
+        if (typeof loadDashboard === "function") {
+            loadDashboard();
+        }
 
     } catch (error) {
-
         console.error("Save User Error:", error);
-
         alert("Failed to save user.");
     }
 });
+function convertFileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = (error) => reject(error);
+        reader.readAsDataURL(file);
+    });
+}
 
-
-/* =========================
-   EDIT USER
-========================= */
 
 async function editUser(id) {
-
     try {
-
         const response = await fetch(`${USERS_API}/${id}`);
-
+        
         if (!response.ok) {
-            throw new Error("Failed to load user");
+            throw new Error("Failed to fetch user");
         }
 
         const user = await response.json();
 
-        document.getElementById("userId").value = user.id;
-
+        // Populate Form Fields
+        document.getElementById("userId").value = user.id || "";
         document.getElementById("userName").value = user.name || "";
-
         document.getElementById("userEmail").value = user.email || "";
-
         document.getElementById("userPassword").value = user.password || "";
-
         document.getElementById("userPhone").value = user.phone || "";
+        document.getElementById("userType").value = user.user_type || "Property's Owner";
 
-        document.getElementById("userType").value =
-            user.user_type ||
-            user.userType ||
-            "Property's Owner";
+        // Reset File Input
+        if (userProfileImage) {
+            userProfileImage.value = "";
+        }
 
-        document.getElementById("userModalTitle").textContent = "Edit User";
+        // Profile Image Preview Logic
+        const profileImage = user.profile_image || user.profileImage || user.image || user.profile || "";
 
-        userModal.show();
+        if (profileImage) {
+            if (userProfilePreview) {
+                userProfilePreview.src = profileImage;
+            }
+            if (userProfilePreviewContainer) {
+                userProfilePreviewContainer.classList.remove("d-none");
+            }
+        } else {
+            if (userProfilePreview) {
+                userProfilePreview.src = "https://via.placeholder.com/100?text=User";
+            }
+            if (userProfilePreviewContainer) {
+                userProfilePreviewContainer.classList.remove("d-none");
+            }
+        }
+
+        // Update Modal Title & Open Modal
+        const title = document.getElementById("userModalTitle");
+        if (title) {
+            title.textContent = "Edit User";
+        }
+
+        if (userModal) {
+            userModal.show();
+        }
 
     } catch (error) {
-
         console.error("Edit User Error:", error);
-
         alert("Failed to load user.");
     }
 }
@@ -471,9 +373,6 @@ async function deleteUser(id) {
 }
 
 
-/* =========================
-   PROPERTIES
-========================= */
 
 async function loadProperties() {
 
@@ -572,6 +471,9 @@ async function loadProperties() {
 
                 <td>
                     ${formatPrice(property.price)}
+                </td>
+                    <td>
+                    ${escapeHTML(property.floor || "")}
                 </td>
 
                 <td>
@@ -1049,11 +951,6 @@ async function editProperty(id) {
     }
 }
 
-
-/* =========================
-   DELETE PROPERTY
-========================= */
-
 async function deleteProperty(id) {
 
     const confirmDelete =
@@ -1107,11 +1004,6 @@ async function deleteProperty(id) {
     }
 }
 
-
-/* =========================
-   CONTACTS
-========================= */
-
 function getContacts() {
 
     try {
@@ -1143,10 +1035,6 @@ function getContacts() {
     }
 }
 
-
-/* =========================
-   LOAD CONTACTS
-========================= */
 
 function loadContacts() {
 
@@ -1260,10 +1148,6 @@ function loadContacts() {
 }
 
 
-/* =========================
-   DELETE CONTACT
-========================= */
-
 function deleteContact(index) {
 
     const confirmDelete =
@@ -1303,10 +1187,6 @@ function deleteContact(index) {
 }
 
 
-/* =========================
-   REFRESH CONTACTS
-========================= */
-
 refreshContactsButton.addEventListener(
     "click",
     function () {
@@ -1319,9 +1199,6 @@ refreshContactsButton.addEventListener(
 );
 
 
-/* =========================
-   LOGOUT
-========================= */
 
 logoutButton.addEventListener(
     "click",
@@ -1377,14 +1254,9 @@ function formatPrice(price) {
     }
 
 
-    return "$" +
-        number.toLocaleString();
+    return "" +
+        number.toLocaleString()+" Lakh";
 }
-
-
-/* =========================
-   HTML SECURITY
-========================= */
 
 function escapeHTML(value) {
 

@@ -138,10 +138,6 @@
 
 
             <div class="row g-4 mt-2">
-
-
-                <!-- USERS -->
-
                 <div class="col-12 col-md-4">
 
                     <div class="card shadow-sm h-100">
@@ -287,26 +283,27 @@
                         <table
                             class="table table-bordered table-striped align-middle"
                         >
+<thead class="table-dark">
 
-                            <thead class="table-dark">
+    <tr>
 
-                                <tr>
+        <th>ID</th>
 
-                                    <th>ID</th>
+        <th>Profile Image</th>
 
-                                    <th>Name</th>
+        <th>Name</th>
 
-                                    <th>Email</th>
+        <th>Email</th>
 
-                                    <th>Phone</th>
+        <th>Phone</th>
 
-                                    <th>User Type</th>
+        <th>User Type</th>
 
-                                    <th>Actions</th>
+        <th>Actions</th>
 
-                                </tr>
+    </tr>
 
-                            </thead>
+</thead>
 
                             <tbody id="usersTableBody"></tbody>
 
@@ -320,10 +317,6 @@
 
         </div>
 
-
-        <!-- =========================
-             PROPERTIES SECTION
-        ========================= -->
 
         <div
             id="propertiesSection"
@@ -379,6 +372,7 @@
                                     <th>City</th>
 
                                     <th>Price</th>
+                                    <th>Floor</th>
 
                                     <th>Actions</th>
 
@@ -513,7 +507,43 @@
             <div class="modal-body">
 
                 <form id="userForm">
+<div class="mb-3">
 
+    <label
+        for="userProfileImage"
+        class="form-label"
+    >
+        Profile Image
+    </label>
+
+    <input
+        type="file"
+        id="userProfileImage"
+        class="form-control"
+        accept="image/*"
+    >
+
+    <div
+        id="userProfilePreviewContainer"
+        class="mt-3 text-center d-none"
+    >
+
+        <img
+            id="userProfilePreview"
+            src=""
+            alt="Profile Image"
+            style="
+                width:120px;
+                height:120px;
+                object-fit:cover;
+                border-radius:50%;
+                border:2px solid #ddd;
+            "
+        >
+
+    </div>
+
+</div>
                     <input
                         type="hidden"
                         id="userId"
@@ -783,8 +813,6 @@
                     </div>
 
 
-                    <!-- TOWNSHIP + CITY -->
-
                     <div class="row">
 
                         <div class="col-md-6 mb-3">
@@ -889,17 +917,13 @@
                             >
 
                         </div>
-
-
                         <div class="col-md-3 col-6 mb-3">
-
                             <label
                                 for="floor"
                                 class="form-label"
                             >
                                 Floor
                             </label>
-
                             <input
                                 type="number"
                                 id="floor"
@@ -907,13 +931,10 @@
                                 min="0"
                                 placeholder="e.g., 3"
                             >
-
                         </div>
-
                     </div>
 
 
-                    <!-- PRICE -->
 
                     <div class="mb-3">
 
@@ -927,7 +948,7 @@
                         <div class="input-group">
 
                             <span class="input-group-text">
-                                $
+                                Lakh
                             </span>
 
                             <input
