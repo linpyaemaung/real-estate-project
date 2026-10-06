@@ -8,6 +8,18 @@ function getPath(path) {
     return "pages/" + path;
 }
 
+function resolveImagePath(imageSrc) {
+    if (!imageSrc) {
+        return "https://via.placeholder.com/40";
+    }
+    // If it's already an external URL or absolute path, return as is
+    if (imageSrc.startsWith("http") || imageSrc.startsWith("data:")) {
+        return imageSrc;
+    }
+    // Handle relative local image paths based on current location
+    return getPath(imageSrc);
+}
+
 function loadUserProfile() {
     if (!authArea) {
         return;
@@ -30,10 +42,9 @@ function loadUserProfile() {
     try {
         const user = JSON.parse(currentUser);
 
-        const profileImage =
-            user.image ||
-            user.profile_image ||
-            "https://via.placeholder.com/40";
+        // Fetch image property and process relative paths
+        const rawImage = user.image || user.profile_image;
+        const profileImage = resolveImagePath(rawImage);
 
         const currentPath = window.location.pathname;
         const hideCreatePropertyBtn = 
@@ -59,7 +70,8 @@ function loadUserProfile() {
                          width="42"
                          height="42"
                          class="rounded-circle"
-                         style="object-fit: cover; cursor: pointer;">
+                         style="object-fit: cover; cursor: pointer;"
+                         onerror="this.onerror=null; this.src='https://via.placeholder.com/40';">
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li>
@@ -82,21 +94,25 @@ function loadUserProfile() {
         `;
 
     } catch (error) {
-        console.log(error);
+        console.error("Error loading user profile:", error);
         localStorage.removeItem("currentUser");
     }
 }
 
 function logout() {
     localStorage.removeItem("currentUser");
-    window.location.href = getPath("../index.html");
+    const isPagesFolder = window.location.pathname.includes("/pages");
+    window.location.href = isPagesFolder ? "../index.html" : "index.html";
 }
+
 function backbtn() {
     const user = localStorage.getItem("currentUser");
+    const isPagesFolder = window.location.pathname.includes("/pages");
+    
     if (user) {
-        window.location.href = "../../index.html"; 
+        window.location.href = isPagesFolder ? "../index.html" : "index.html"; 
     } else {
-        window.location.href = "login.html";
+        window.location.href = getPath("users/login.html");
     }
 }
 

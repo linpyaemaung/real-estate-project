@@ -5,7 +5,6 @@ const message = document.getElementById("message");
 const password = document.getElementById("password");
 const togglePassword = document.getElementById("togglePassword");
 
-// Show / hide password
 togglePassword.addEventListener("click", () => {
 
     if (password.type === "password") {
